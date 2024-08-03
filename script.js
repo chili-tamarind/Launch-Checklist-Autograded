@@ -1,4 +1,4 @@
-// Write your JavaScript code here!
+// Write your JavaScript code here! 
 
 window.addEventListener("load", function() {
 
