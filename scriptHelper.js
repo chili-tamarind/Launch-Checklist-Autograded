@@ -1,10 +1,8 @@
-// Write your helper functions here!
-
 require('cross-fetch/polyfill');
 
-async function myFetch() { 
-    let url = 'https://handlers.education.launchcode.org/static/planets.json';    
-    const response = await fetch(url);    
+async function myFetch() {
+    let url = 'https://handlers.education.launchcode.org/static/planets.json';
+    const response = await fetch(url);
     const planetsReturned = await response.json();
     return planetsReturned;
 }
@@ -16,7 +14,7 @@ function pickPlanet(planets) {
 
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
     let missionTarget = document.getElementById('missionTarget');
-    
+
     missionTarget.innerHTML = `
         <h2>Mission Destination</h2>
         <ol>
@@ -30,89 +28,79 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
 }
 
 function validateInput(testInput) {
-    
+
     testInput = String(testInput);
     const numericRegex = /^\d+(\.\d+)?$/; //regex to check for only numeric digits 
-    let validated_input;
+    let validatedInput;
 
     if (testInput.trim() === "" || testInput.length === 0) {
-        validated_input = "Empty";
-    } else if (!isNaN(testInput) && isFinite(testInput) && numericRegex.test(testInput)) { 
-        validated_input = "Is a Number";
+        validatedInput = "Empty";
+    } else if (!isNaN(testInput) && isFinite(testInput) && numericRegex.test(testInput)) {
+        validatedInput = "Is a Number";
     } else {
-        validated_input = "Not a Number";
+        validatedInput = "Not a Number";
     }
 
-    return validated_input;
+    return validatedInput;
 }
 
-function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) { 
-    
-    let validationDiv = document.getElementById('validationDiv'); 
+function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
+
+    let validationDiv = document.getElementById('validationDiv');
     let validationMessage = '';
 
     // VARIABLES
-    let validate_pilot = validateInput(pilot.value);
-    let validate_copilot = validateInput(copilot.value);
-    let validate_fuelLevel = validateInput(fuelLevel.value);
-    let validate_cargoLevel = validateInput(cargoLevel.value);
-    let error_counter_validate = 0; 
+    let validatePilot = validateInput(pilot.value);
+    let validateCopilot = validateInput(copilot.value);
+    let validateFuelLevel = validateInput(fuelLevel.value);
+    let validateCargoLevel = validateInput(cargoLevel.value);
+    let errorCounterValidate = 0;
 
     // PILOT 
-    if  (validate_pilot === "Empty") {
-        error_counter_validate++;
+    if (validatePilot === "Empty") {
+        errorCounterValidate++;
         validationMessage += `⚠️ Pilot name must be a non-empty string<br>`;
     }
 
     // COPILOT 
-    if  (validate_copilot === "Empty") {
-        error_counter_validate++;
+    if (validateCopilot === "Empty") {
+        errorCounterValidate++;
         validationMessage += `⚠️ Copilot name must be a non-empty string<br>`;
-    } 
+    }
 
     // FUEL LEVEL 
-    if  (validate_fuelLevel !== "Is a Number") {
-        error_counter_validate++;
-        validationMessage += `⚠️ Fuel level must be a positive number<br>`; 
+    if (validateFuelLevel !== "Is a Number") {
+        errorCounterValidate++;
+        validationMessage += `⚠️ Fuel level must be a positive number<br>`;
     }
 
     // CARGO MASS
-    if  (validate_cargoLevel !== "Is a Number") {
-        error_counter_validate++;
+    if (validateCargoLevel !== "Is a Number") {
+        errorCounterValidate++;
         validationMessage += `⚠️ Cargo level must be a positive number`;
     }
 
-    /* STUFF
-    validationMessage += 
-        `<br> Pilot: ${validate_pilot}
-        <br> Copilot: ${validate_copilot}
-        <br> Fuel: ${validate_fuelLevel}
-        <br> Cargo: ${validate_cargoLevel}`*/
+    // UPDATE
+    if (errorCounterValidate > 0) {
+        validationDiv.innerHTML = validationMessage;
+        validationDiv.style.padding = "12px";
+        validationDiv.style.visibility = 'visible';
 
-    // UPDATE DIVS
-    if (error_counter_validate > 0) {    
-        // Update error messages        
-        validationDiv.style.visibility = 'visible';  
-        validationDiv.innerHTML = validationMessage;      
-
-        // Reset info screen
-        faultyItems.style.visibility = 'hidden';         
+        faultyItems.style.visibility = 'hidden';
         launchStatus.innerHTML = 'Awaiting Information Before Launch';
-        launchStatus.style.color = 'black'; 
-        }
-    else {        
-        // Clear error messages
+        launchStatus.style.color = 'black';
+    }
+    else {
         validationDiv.style.visibility = 'hidden';
         validationDiv.innerHTML = '';
 
-        // Update info screen
         updateLaunchInfo(pilot, copilot, fuelLevel, cargoLevel);
     }
 }
 
 function updateLaunchInfo(pilot, copilot, fuelLevel, cargoLevel) {
-    
-    let error_counter_launch = 0; 
+
+    let errorCounterLaunch = 0;
 
     if (parseFloat(fuelLevel.value) < 10000) { // liters            
         fuelStatus.innerHTML = 'Error! There is not enough fuel for the journey.';
@@ -122,22 +110,22 @@ function updateLaunchInfo(pilot, copilot, fuelLevel, cargoLevel) {
     if (parseFloat(cargoLevel.value) > 10000) { // kilograms            
         cargoStatus.innerHTML = 'Error! There is too much mass for the shuttle to take off.';
         launchErrors();
-    }    
+    }
 
     function launchErrors() {
         launchStatus.innerHTML = `Shuttle not ready for launch`;
         launchStatus.style.color = 'red';
-        error_counter_launch++;
+        errorCounterLaunch++;
     }
 
     // NO ERROR
-    if (error_counter_launch === 0) {            
+    if (errorCounterLaunch === 0) {
         launchStatus.innerHTML = `Shuttle is ready for launch`;
         launchStatus.style.color = 'green';
     }
 
-    pilotStatus.innerHTML = `Pilot ${pilot.value} is ready for launch`; 
-    copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready for launch`; 
+    pilotStatus.innerHTML = `Pilot ${pilot.value} is ready for launch`;
+    copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready for launch`;
     faultyItems.style.visibility = 'visible';
 }
 
@@ -147,5 +135,5 @@ module.exports.updateLaunchInfo = updateLaunchInfo;
 module.exports.addDestinationInfo = addDestinationInfo;
 module.exports.validateInput = validateInput;
 module.exports.formSubmission = formSubmission;
-module.exports.pickPlanet = pickPlanet; 
+module.exports.pickPlanet = pickPlanet;
 module.exports.myFetch = myFetch;
