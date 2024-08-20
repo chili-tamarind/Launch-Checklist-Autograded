@@ -30,7 +30,7 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
 function validateInput(testInput) {
 
     testInput = String(testInput);
-    const numericRegex = /^\d+(\.\d+)?$/; //regex to check for only numeric digits 
+    const numericRegex = /^\d+(\.\d+)?$/;
     let validatedInput;
 
     if (testInput.trim() === "" || testInput.length === 0) {
@@ -46,41 +46,35 @@ function validateInput(testInput) {
 
 function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
 
-    let validationDiv = document.getElementById('validationDiv');
-    let validationMessage = '';
+    let validationMessage = '';    
+    let launchStatus = document.getElementById('launchStatus');
 
-    // VARIABLES
     let validatePilot = validateInput(pilot.value);
     let validateCopilot = validateInput(copilot.value);
     let validateFuelLevel = validateInput(fuelLevel.value);
     let validateCargoLevel = validateInput(cargoLevel.value);
     let errorCounterValidate = 0;
 
-    // PILOT 
     if (validatePilot === "Empty") {
         errorCounterValidate++;
         validationMessage += `⚠️ Pilot name must be a non-empty string<br>`;
     }
 
-    // COPILOT 
     if (validateCopilot === "Empty") {
         errorCounterValidate++;
         validationMessage += `⚠️ Copilot name must be a non-empty string<br>`;
     }
 
-    // FUEL LEVEL 
     if (validateFuelLevel !== "Is a Number") {
         errorCounterValidate++;
         validationMessage += `⚠️ Fuel level must be a positive number<br>`;
     }
 
-    // CARGO MASS
     if (validateCargoLevel !== "Is a Number") {
         errorCounterValidate++;
         validationMessage += `⚠️ Cargo level must be a positive number`;
     }
 
-    // UPDATE
     if (errorCounterValidate > 0) {
         validationDiv.innerHTML = validationMessage;
         validationDiv.style.padding = "12px";
@@ -89,7 +83,8 @@ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
         faultyItems.style.visibility = 'hidden';
         launchStatus.innerHTML = 'Awaiting Information Before Launch';
         launchStatus.style.color = 'black';
-    }
+
+    } 
     else {
         validationDiv.style.visibility = 'hidden';
         validationDiv.innerHTML = '';
@@ -105,12 +100,12 @@ function updateLaunchInfo(pilot, copilot, fuelLevel, cargoLevel) {
     if (parseFloat(fuelLevel.value) < 10000) { // liters            
         fuelStatus.innerHTML = 'Error! There is not enough fuel for the journey.';
         launchErrors();
-    }
+    } else {fuelStatus.innerHTML = 'Fuel level high enough for launch';}
 
     if (parseFloat(cargoLevel.value) > 10000) { // kilograms            
         cargoStatus.innerHTML = 'Error! There is too much mass for the shuttle to take off.';
         launchErrors();
-    }
+    } else {cargoStatus.innerHTML = 'Cargo mass low enough for launch';}
 
     function launchErrors() {
         launchStatus.innerHTML = `Shuttle not ready for launch`;
@@ -120,16 +115,17 @@ function updateLaunchInfo(pilot, copilot, fuelLevel, cargoLevel) {
 
     // NO ERROR
     if (errorCounterLaunch === 0) {
+
         launchStatus.innerHTML = `Shuttle is ready for launch`;
         launchStatus.style.color = 'green';
-    }
+    };
 
     pilotStatus.innerHTML = `Pilot ${pilot.value} is ready for launch`;
-    copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready for launch`;
+    copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready for launch`;        
+    
     faultyItems.style.visibility = 'visible';
 }
 
-// MODULE EXPORTS
 module.exports.updateLaunchInfo = updateLaunchInfo;
 
 module.exports.addDestinationInfo = addDestinationInfo;
